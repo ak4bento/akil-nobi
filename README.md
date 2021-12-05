@@ -1,7 +1,7 @@
 ## Requirement
 
 -   [Laravel](https://laravel.com/)
--   [POSTMAN](https://www.postman.com/)
+-   [Postman](https://www.postman.com/)
 -   [Mysql](https://www.mysql.com/)
 
 ## Project Setup
@@ -22,7 +22,10 @@ cp .env.example .env
 php artisan key:generate
 
 # Run migrations
-php artisan migrate
+php artisan migrate || 
+(jika tidak menggunakan migration import dari file nobitest.sql)
+
+
 
 # Run seeder
 php artisan db:seed
