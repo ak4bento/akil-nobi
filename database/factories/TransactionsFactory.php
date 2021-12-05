@@ -5,7 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
-class UserFactory extends Factory
+class TransactionsFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -14,10 +14,6 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        $faker = Faker::create('id_ID');
-        return [
-            'name' => $faker->name(),
-            'username' => $faker->userName(),
-        ];
+        //
     }
 }

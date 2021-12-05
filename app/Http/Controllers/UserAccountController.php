@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserAccount;
+use App\Exceptions\ResponseException;
+use App\Http\Requests\UserAccountRequest;
+use App\Http\Resources\MemberResource;
+use App\Http\Resources\UserAccountResource;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserAccountController extends Controller
@@ -12,19 +17,29 @@ class UserAccountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $appends = ['total_balance', 'current_nab'];
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $user = User::select(['id as user_id', 'total_unit'])
+                    ->orderBy('id', 'ASC')
+                    ->where('total_unit', '>', 0);
+                    
+        if (isset($request->userid)) {
+            $user->where('id', '=', $request->userid);
+        }
+
+        $user = $user->paginate($request->limit ?? 20);
+
+        $user->getCollection()
+                ->each(function ($item) use ($appends) {
+                    $item->append($appends);
+                });
+
+        return MemberResource::collection($user)->additional([
+            'status' => 200,
+            'message' => 'Success'
+        ]);
     }
 
     /**
@@ -33,53 +48,11 @@ class UserAccountController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserAccountRequest $request, User $user)
     {
+        $user->fill($request->all());
+        $user->save();
         
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\UserAccount  $userAccount
-     * @return \Illuminate\Http\Response
-     */
-    public function show(UserAccount $userAccount)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\UserAccount  $userAccount
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(UserAccount $userAccount)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\UserAccount  $userAccount
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, UserAccount $userAccount)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\UserAccount  $userAccount
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(UserAccount $userAccount)
-    {
-        //
+        return new UserAccountResource($user);
     }
 }

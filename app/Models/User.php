@@ -19,26 +19,29 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
-        'password',
+        'username',
+        'total_unit',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function transactions()
+    {
+        return $this->hasMany(Transactions::class);
+    }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function getTotalUnit()
+    {
+        return $this->sum('total_unit');
+    }
+
+    public function getCurrentNabAttribute(): float
+    {
+        $assetValues = AssetValues::orderBy('created_at', 'desc')->first();
+
+        return $assetValues->nab ?? 0;
+    }
+
+    public function getTotalBalanceAttribute()
+    {
+        return round($this->current_nab * $this->total_unit, 4, PHP_ROUND_HALF_DOWN);
+    }
 }

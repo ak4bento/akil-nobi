@@ -2,9 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\AssetValues;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as Faker;
 
-class UserAccountFactory extends Factory
+class AssetValuesFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -13,8 +16,6 @@ class UserAccountFactory extends Factory
      */
     public function definition()
     {
-        return [
-            //
-        ];
+        //
     }
 }

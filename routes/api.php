@@ -18,27 +18,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::get('/user/add', [App\Http\Controllers\UserAccountController::class, 'store']);
+    Route::post('/user/add', [App\Http\Controllers\UserAccountController::class, 'store']);
     
     Route::prefix('ib')->group(function () {
-        Route::get('/updateTotalBalance', function () {
-            return 'Hello World ';
-        });
+        Route::post('/updateTotalBalance', [App\Http\Controllers\AssetValuesController::class, 'store']);
     
-        Route::get('/listNAB', function () {
-            return 'Hello World ';
-        });
+        Route::get('/listNAB', [App\Http\Controllers\AssetValuesController::class, 'show']);
     
-        Route::get('/topup', function () {
-            return 'Hello World ';
-        });
+        Route::POST('/topup', [App\Http\Controllers\TopUpController::class, 'store']);
     
-        Route::get('/withdraw', function () {
-            return 'Hello World ';
-        });
+        Route::POST('/withdraw', [App\Http\Controllers\WithdrawController::class, 'store']);
     
-        Route::get('/member', function () {
-            return 'Hello World ';
-        });
+        Route::get('/member', [App\Http\Controllers\UserAccountController::class, 'index']);
     });
+});
+
+Route::fallback(function () {
+    return response()->json(["errors" => true, "message" => "Not Found",]);
 });
